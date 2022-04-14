@@ -53,7 +53,7 @@ ulimit -v unlimited
 nsg_config = {
     # -- TODO: CUSTOMIZE --
     'andrewid': 'awilf',
-    'results_path': '{this_dir}/results', # path to ./results
+    'results_path': f'{this_dir}/results', # path to ./results
     'overwrite': 1, # if this hash path already exists (this hyperparam combination has been tried), overwrite it?
     'hash_len': 15, # hashes are annoyingly long.  If you're not running a ton of tests, you can shorten the hash length (increased prob of collisions). -1 if you want full length.
     'dummy_program': 'python /work/awilf/utils/dummy.py', # give path to some program (probably empty) you can run with sbatch immediately and it will do nothing - just to email you

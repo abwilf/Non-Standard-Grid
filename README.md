@@ -11,12 +11,11 @@ The functionality provided is incorporated to `alex_utils.py`, but is reproduced
 pip install pandas numpy requests tqdm h5py
 ```
 
-Install Standard Grid and change the path in `alex_utils.py` that points to it.
-
+Install Standard Grid from [here](https://github.com/abwilf/Standard-Grid) and change the paths in `alex_utils.py` to the one that corresponds to your system (i.e. find and replace `/work/awilf/Standard-Grid`). 
 
 ## Usage
 To run a grid search with non-standard grid, you'll need two things: a program to run and a runfile which defines the grid search.
-1. **The Program**: The basic requirements of this program are that it takes in arguments from Standard-Grid's argparser, writes results to args.out_dir/results.json, and writes args.out_dir/success.txt if it doesn't error out. I wrap this in alex_utils.main_wrapper so you don't need to worry about it.  You can use the code below as a template `main.py` file.
+1. **The Program**: The basic requirements of this program are that it takes in arguments from Standard-Grid's argparser, writes results to `args.out_dir/results.json`, and writes `args.out_dir/success.txt` if it doesn't error out. I wrap this functionality in alex_utils.main_wrapper.  You can use the code below as a template `main.py` file.
 
 ```
 from alex_utils import *
@@ -34,7 +33,7 @@ def main(_gc):
     # ... do whatever ...
     time.sleep(5)
 
-    results = {
+    results = { # this will be different for you
         'hp1': [gc['hp1']],
         'hp2': [gc['hp2']],
         'accuracy': [gc['hp1']+gc['hp2']],
@@ -42,11 +41,11 @@ def main(_gc):
     return results
 
 if __name__ == '__main__':
-    main_wrapper(main,defaults, results=True)
+    main_wrapper(main, defaults, results=True)
 ```
 
 2. **The Runfile**: In the runfile (e.g. `run_nsg.py`), you define which hyperparameter combinations you'd like to search over, define the skeleton of your sbatch call, and pass all that to non-standard grid (`nsg`), which does the rest.  You can use the below (in `run_nsg.py`) as a template.  Make sure to look out for `TODO` markers.
-```
+```python
 from alex_utils import *
 
 ## TODO: Make sure program takes inputs as --arg {arg_val}, not -arg or positional.  See main.py for example.
