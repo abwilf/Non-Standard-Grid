@@ -30,7 +30,7 @@ skel_config = {
     'num_gpu_per': 1, # gpus per task
     'mem_gb': 10, # 10 GB of mem allocated for each job
     'exclude_list': 'compute-2-9,compute-0-19',
-    'mail_user': 'dummyblah123@gmail.com', # TODO: please don't use this, as it will spam my dummy account!
+    'mail_user': 'dummy@gmail.com',
     'mail_type': 'NONE', # for each of the jobs, do not send an email if they fail
     'runtime': '1-00:00', # how much runtime before atlas cuts it off (D-HH:MM)
 }
@@ -62,8 +62,7 @@ nsg_config = {
     'skeleton': skeleton, # skeleton of sbatch command for each: nsg will add
     'hp': hp, # hyperparameters
     'command': skel_config['command'], # have to pass this in so nsg knows where to find and replace with hp flags
-    # 'max_sbatch_ops': 8, # how many jobs running in parallel?  Good practice to keep this capped at 8
-    'max_sbatch_ops': 4, # TODO CHANGE!!
+    'max_sbatch_ops': 8, # how many jobs running in parallel?  Good practice to keep this capped at 8
     'sleep_secs': 2, # how many seconds do you want it to sleep for before checking if there is space to submit another job?
     'num_chars_squeue': 3, # assume that squeue will only give us 3 characters of this hash.  Should be fine, because we're already filtering on andrewid
 }

@@ -11,7 +11,7 @@ The functionality provided is incorporated to `alex_utils.py`, but is reproduced
 pip install pandas numpy requests tqdm h5py
 ```
 
-Install Standard Grid from [here](https://github.com/abwilf/Standard-Grid) and change the paths in `alex_utils.py` to the one that corresponds to your system (i.e. find and replace `/work/awilf/Standard-Grid`). 
+Download Standard Grid from [here](https://github.com/abwilf/Standard-Grid) and change the paths in `alex_utils.py` to the one that corresponds to your system (i.e. find and replace `/work/awilf/Standard-Grid`). 
 
 ## Usage
 To run a grid search with non-standard grid, you'll need two things: a program to run and a runfile which defines the grid search.
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 ```
 
 2. **The Runfile**: In the runfile (e.g. `run_nsg.py`), you define which hyperparameter combinations you'd like to search over, define the skeleton of your sbatch call, and pass all that to non-standard grid (`nsg`), which does the rest.  You can use the below (in `run_nsg.py`) as a template.  Make sure to look out for `TODO` markers.
-```python
+```
 from alex_utils import *
 
 ## TODO: Make sure program takes inputs as --arg {arg_val}, not -arg or positional.  See main.py for example.
@@ -76,7 +76,7 @@ skel_config = {
     'num_gpu_per': 1, # gpus per task
     'mem_gb': 10, # 10 GB of mem allocated for each job
     'exclude_list': 'compute-2-9,compute-0-19',
-    'mail_user': 'dummyblah123@gmail.com', # TODO: please don't use this, as it will spam my dummy account!
+    'mail_user': 'dummy@gmail.com',
     'mail_type': 'NONE', # for each of the jobs, do not send an email if they fail
     'runtime': '1-00:00', # how much runtime before atlas cuts it off (D-HH:MM)
 }
@@ -99,17 +99,16 @@ ulimit -v unlimited
 nsg_config = {
     # -- TODO: CUSTOMIZE --
     'andrewid': 'awilf',
-    'results_path': '{this_dir}/results', # path to ./results
+    'results_path': f'{this_dir}/results', # path to ./results
     'overwrite': 1, # if this hash path already exists (this hyperparam combination has been tried), overwrite it?
     'hash_len': 15, # hashes are annoyingly long.  If you're not running a ton of tests, you can shorten the hash length (increased prob of collisions). -1 if you want full length.
-    'dummy_program': 'python /work/awilf/utils/dummy.py', # give path to some program (probably empty) you can run with sbatch immediately and it will do nothing - just to email you
+    'dummy_program': 'python /work/awilf/utils/dummy.py', # give path to some program (empty works fine - e.g. touch /work/awilf/utils/dummy.py) you can run with sbatch immediately and it will do nothing - just to email you
     
     # -- Probably don't customize --
     'skeleton': skeleton, # skeleton of sbatch command for each: nsg will add
     'hp': hp, # hyperparameters
     'command': skel_config['command'], # have to pass this in so nsg knows where to find and replace with hp flags
-    # 'max_sbatch_ops': 8, # how many jobs running in parallel?  Good practice to keep this capped at 8
-    'max_sbatch_ops': 4, # TODO CHANGE!!
+    'max_sbatch_ops': 8, # how many jobs running in parallel?  Good practice to keep this capped at 8
     'sleep_secs': 2, # how many seconds do you want it to sleep for before checking if there is space to submit another job?
     'num_chars_squeue': 3, # assume that squeue will only give us 3 characters of this hash.  Should be fine, because we're already filtering on andrewid
 }
