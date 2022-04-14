@@ -25,7 +25,7 @@ command (e.g. python main.py -- just the program name: nsg will fill in the argu
 # -- TODO: CUSTOMIZE --
 this_dir = '/work/awilf/nsg_test'
 skel_config = {
-    'command': 'python nsg_main.py',
+    'command': 'python main.py',
     'gpu_partition': 'gpu_low',
     'num_gpu_per': 1, # gpus per task
     'mem_gb': 10, # 10 GB of mem allocated for each job
@@ -57,6 +57,7 @@ nsg_config = {
     'overwrite': 1, # if this hash path already exists (this hyperparam combination has been tried), overwrite it?
     'hash_len': 15, # hashes are annoyingly long.  If you're not running a ton of tests, you can shorten the hash length (increased prob of collisions). -1 if you want full length.
     'dummy_program': 'python /work/awilf/utils/dummy.py', # give path to some program (probably empty) you can run with sbatch immediately and it will do nothing - just to email you
+    'tarfiles': ['main.py', 'README.md'], # choose some files you'd like to compress (tar) with each HP search so you can reproduce later.  If none, just use []
     
     # -- Probably don't customize --
     'skeleton': skeleton, # skeleton of sbatch command for each: nsg will add

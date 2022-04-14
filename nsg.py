@@ -1,5 +1,3 @@
-# import sys; sys.path.append('/work/awilf/utils/'); from alex_utils import *
-from alex_utils import *
 
 #### NON-STANDARD GRID (NSG) ####
 def get_grid(hp):
@@ -47,6 +45,7 @@ def create_dir_structure(hash_, hash_path, grid, config):
     ├── 2
     ...
     ├── csv_results.csv
+    ├── compressed.tar
     ├── hp.json
     ├── report.json
     └── run_scripts
@@ -148,8 +147,6 @@ def collate_results(hash_, hash_path, grid, config):
     hp_path = join(hash_path, 'hp.json')
     save_json(hp_path, config['hp'])
 
-    # TODO: save compressed code? give a list of files to tar and compress
-
 def compile_error_report(hash_path, grid):
     # compile error report
     report = {
@@ -158,7 +155,6 @@ def compile_error_report(hash_path, grid):
         'num_failed': 0,
         'errors': {}
     }
-
     for i in range(len(grid)):
         if 'success.txt' not in [elt.split('/')[-1] for elt in glob(join(hash_path, f'{i}', '*'))]:
             report['num_failed'] += 1
@@ -170,10 +166,18 @@ def compile_error_report(hash_path, grid):
         else:
             report['num_successful'] += 1
 
+    if report['num_failed'] > 0:
+        print(f'###\n!!! ALERT !!!\nThere were some errors.  Please check the report for a description:\n{join(hash_path, "report.json")}\n###')
+    
     save_json(join(hash_path, 'report.json'), report)
 
 def email_complete(config):
     os.popen(f'sbatch --mail-type=END --mail-user=dummyblah123@gmail.com --wrap "{config["dummy_program"]}"')
+
+def compress_files(hash_path, config):
+    if len(config['tarfiles']) > 0:
+        write_tar(join(hash_path, 'compressed.tar'), config['tarfiles'])
+    
 
 def nsg(config):
     '''
@@ -189,8 +193,10 @@ def nsg(config):
     collate_results(hash_, hash_path, grid, config)
     compile_error_report(hash_path, grid)
     email_complete(config)
+    compress_files(hash_path, config)
 
     print(f'\nhash=\'{hash_}\'\n\n')
 
     rt.get()
 ####
+

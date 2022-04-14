@@ -2,7 +2,7 @@
 
 This is a repo that allows you to run large scale grid searches on a cluster such as Atlas.  It is "non-standard" because unlike [Standard-Grid](https://github.com/A2Zadeh/Standard-Grid) (which is fantastic), this allows you to execute any kind of code you need in an sbatch script - including the important `ulimit` command and `singularity exec`. 
 
-At a high level, we want a program that takes in a set of hyperparameters, turns them into a grid search, runs all the different combinations in the grid across the cluster, collates the results, creates a report of the errors, and emails you when it finishes.  NSG does just that.  For each set of hyperparameters it creates a folder under a unique hash in results/{hash}, and creates subfolders for each combination's output.  When it has finished, it writes the results to `csv_reuslts.csv`, along with the hyperparameters `hp.json` and a report of the errors `report.json`. 
+At a high level, we want a program that takes in a set of hyperparameters, turns them into a grid search, runs all the different combinations in the grid across the cluster, collates the results, creates a report of the errors, and emails you when it finishes.  NSG does just that.  For each set of hyperparameters it creates a folder under a unique hash in results/{hash}, and creates subfolders for each combination's output.  When it has finished, it writes the results to `csv_reuslts.csv`, along with the hyperparameters `hp.json` and a report of the errors `report.json`. As a side bonus, you can include files you'd like to compress into a tar for each HP search for perfect reproducibility later.
 
 The functionality provided is incorporated to `alex_utils.py`, but is reproduced in `nsg.py` for clarity, in case you'd like to see what's happening under the hood.
 
@@ -71,7 +71,7 @@ command (e.g. python main.py -- just the program name: nsg will fill in the argu
 # -- TODO: CUSTOMIZE --
 this_dir = '/work/awilf/nsg_test'
 skel_config = {
-    'command': 'python nsg_main.py',
+    'command': 'python main.py',
     'gpu_partition': 'gpu_low',
     'num_gpu_per': 1, # gpus per task
     'mem_gb': 10, # 10 GB of mem allocated for each job
@@ -103,7 +103,8 @@ nsg_config = {
     'overwrite': 1, # if this hash path already exists (this hyperparam combination has been tried), overwrite it?
     'hash_len': 15, # hashes are annoyingly long.  If you're not running a ton of tests, you can shorten the hash length (increased prob of collisions). -1 if you want full length.
     'dummy_program': 'python /work/awilf/utils/dummy.py', # give path to some program (empty works fine - e.g. touch /work/awilf/utils/dummy.py) you can run with sbatch immediately and it will do nothing - just to email you
-    
+    'tarfiles': ['main.py', 'README.md'], # choose some files you'd like to compress (tar) with each HP search so you can reproduce later.  If none, just use []
+
     # -- Probably don't customize --
     'skeleton': skeleton, # skeleton of sbatch command for each: nsg will add
     'hp': hp, # hyperparameters
@@ -116,3 +117,31 @@ nsg(nsg_config)
 ```
 
 3. Run the program with `run_nsg.py`. 
+
+## Output
+The program will create a tree like this for the hash of your hyperparameter combination
+```bash
+results/cb97ca32aaf0497/
+    ├── 0
+    │   ├── compute-0-18-err.txt
+    │   ├── compute-0-18-out.txt
+    │   ├── results.json
+    │   └── success.txt
+    ├── 1
+    │   ├── compute-0-18-err.txt
+    │   ├── compute-0-18-out.txt
+    │   ├── results.json
+    │   └── success.txt
+    ├── 2
+    ...
+    ├── csv_results.csv
+    ├── compressed.tar
+    ├── hp.json
+    ├── report.json
+    └── run_scripts
+        ├── 0.sh
+        ├── 1.sh
+        ├── 2.sh
+        ...
+    '''
+```

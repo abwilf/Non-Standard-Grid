@@ -15,6 +15,9 @@ def main(_gc):
     # ... do whatever ...
     time.sleep(5)
 
+    if gc['hp1'] == 1:
+        assert False, 'fail!'
+    
     results = {
         'hp1': [gc['hp1']],
         'hp2': [gc['hp2']],
