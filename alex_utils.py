@@ -905,7 +905,7 @@ def compile_error_report(hash_path, grid):
     save_json(join(hash_path, 'report.json'), report)
 
 def email_complete(config):
-    os.popen(f'sbatch --mail-type=END --mail-user=dummyblah123@gmail.com --wrap "{config["dummy_program"]}"')
+    os.popen(f'sbatch --mail-type=END --mail-user={config["mail_user"]} --wrap "{config["dummy_program"]}"')
 
 def compress_files(hash_path, config):
     if len(config['tarfiles']) > 0:
