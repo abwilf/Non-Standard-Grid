@@ -117,6 +117,7 @@ nsg(nsg_config)
 ```
 
 3. Run the program with `run_nsg.py`. 
+Note: it is smart to run this within a `tmux` screen, so it doesn't stop when you shut your computer. 
 
 ## Output
 The program will create a tree like this for the hash of your hyperparameter combination
